@@ -84,7 +84,7 @@ CText::Load(void)
 	}
 
 	keyArray.Update(data.chars);
-	LoadFxt("CLEO/CLEO_TEXT/ul_text.fxt");
+	LoadFxt("CLEO\\CLEO_TEXT\\ul_text.fxt");
 
 	delete[] filedata;
 }

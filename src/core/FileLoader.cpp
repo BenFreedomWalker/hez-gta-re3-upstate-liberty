@@ -264,10 +264,11 @@ CFileLoader::LoadCollisionFile(const char *filename)
 			break;
 		}
 		memcpy(modelname, colData, sizeof(modelname));
+		modelname[sizeof(modelname) - 1] = '\0';
 
 		if(!ValidateCollisionModelData(colData + sizeof(modelname),
 		                               header.size - sizeof(modelname))){
-			debug("Invalid collision model %s in %s\\n", modelname, filename);
+			debug("Invalid collision model %s in %s\n", modelname, filename);
 			RwFree(colData);
 			continue;
 		}
@@ -282,7 +283,7 @@ CFileLoader::LoadCollisionFile(const char *filename)
 				mi->SetColModel(model, true);
 			}
 		}else{
-			debug("colmodel %s can't find a modelinfo\\n", modelname);
+			debug("colmodel %s can't find a modelinfo\n", modelname);
 		}
 		RwFree(colData);
 	}

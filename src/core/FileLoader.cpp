@@ -975,7 +975,7 @@ CFileLoader::LoadModelTraits(const char *filename)
 		GLASS
 	};
 	int fd = CFileMgr::OpenFile(filename, "rb");
-	if(fd < 0){
+	if(fd <= 0){
 		debug("Model traits file %s not found; using built-in model traits.\n", filename);
 		return;
 	}

@@ -1094,6 +1094,10 @@ CFileLoader::LoadObjectTypes(const char *filename)
 	debug("Loading object types from %s...\n", filename);
 
 	fd = CFileMgr::OpenFile(filename, "rb");
+	if(fd <= 0){
+		debug("Could not open IDE file %s\n", filename);
+		return;
+	}
 	for(line = CFileLoader::LoadLine(fd); line; line = CFileLoader::LoadLine(fd)){
 		if(*line == '\0' || *line == '#')
 			continue;
@@ -1600,6 +1604,10 @@ CFileLoader::LoadScene(const char *filename)
 	debug("Creating objects from %s...\n", filename);
 
 	fd = CFileMgr::OpenFile(filename, "rb");
+	if(fd <= 0){
+		debug("Could not open IPL file %s\n", filename);
+		return;
+	}
 	for(line = CFileLoader::LoadLine(fd); line; line = CFileLoader::LoadLine(fd)){
 		if(*line == '\0' || *line == '#')
 			continue;
@@ -1763,6 +1771,10 @@ CFileLoader::LoadMapZones(const char *filename)
 	debug("Creating zones from %s...\n", filename);
 
 	fd = CFileMgr::OpenFile(filename, "rb");
+	if(fd <= 0){
+		debug("Could not open map zone file %s\n", filename);
+		return;
+	}
 	for(line = CFileLoader::LoadLine(fd); line; line = CFileLoader::LoadLine(fd)){
 		if(*line == '\0' || *line == '#')
 			continue;

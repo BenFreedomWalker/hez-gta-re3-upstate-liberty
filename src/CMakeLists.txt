@@ -29,6 +29,18 @@ target_link_libraries(${EXECUTABLE} PRIVATE
     Threads::Threads
 )
 
+if(WIN32)
+    # GCC does not honor MSVC's #pragma comment(lib, ...) directives.
+    target_link_libraries(${EXECUTABLE} PRIVATE
+        winmm
+        ddraw
+        dinput8
+        dxguid
+        strmiids
+        ole32
+    )
+endif()
+
 target_include_directories(${EXECUTABLE}
     PRIVATE
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>

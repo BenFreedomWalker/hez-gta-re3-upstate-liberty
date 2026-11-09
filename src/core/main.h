@@ -1,6 +1,6 @@
 #pragma once
 
-#define GAME_STORAGE_MULTIPLIER 4
+#define GAME_STORAGE_MULTIPLIER 4 // Upstate GameStorage=4; save files are size-incompatible.
 #define GAME_STORAGE_BUFFER_SIZE (55000 * GAME_STORAGE_MULTIPLIER)
 #define GAME_STORAGE_SAVE_SIZE (201729 * GAME_STORAGE_MULTIPLIER)
 

@@ -89,7 +89,7 @@ cAudioManager::InitialisePoliceRadioZones()
 		int32 index = 0;
 		char *line;
 		while((line = CFileLoader::LoadLine(fd)) != nil){
-			if(*line == '\\0' || *line == '#')
+			if(*line == '\0' || *line == '#')
 				continue;
 
 			char zoneName[24];
@@ -98,7 +98,7 @@ cAudioManager::InitialisePoliceRadioZones()
 				if(index >= NUMAUDIOZONES)
 					break;
 				strncpy(ZoneSfx[index].m_aName, zoneName, 7);
-				ZoneSfx[index].m_aName[7] = '\\0';
+				ZoneSfx[index].m_aName[7] = '\0';
 				ZoneSfx[index].m_nSampleIndex = sampleIndex;
 				ZoneSfx[index].field_12 = 0;
 				index++;

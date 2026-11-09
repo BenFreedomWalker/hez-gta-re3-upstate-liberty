@@ -122,7 +122,7 @@ enum Config {
 
 	NUMROADBLOCKS = 600,
 
-	NUMVISIBLEENTITIES = 2000,
+	NUMVISIBLEENTITIES = 10000, // static native equivalent of Upstate's unlimited visible entity list
 	NUMINVISIBLEENTITIES = 150,
 
 	NUM_AUDIOENTITY_EVENTS = 4,

@@ -214,7 +214,7 @@ CFileLoader::LoadCollisionFile(const char *filename)
 	debug("Loading collision file %s\n", filename);
 	fd = CFileMgr::OpenFile(filename, "rb");
 	if(fd <= 0){
-		debug("Could not open collision file %s\\n", filename);
+		debug("Could not open collision file %s\n", filename);
 		POP_MEMID();
 		return;
 	}

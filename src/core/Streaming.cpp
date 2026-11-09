@@ -1,5 +1,11 @@
 #include "common.h"
 
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
+
 #include "General.h"
 #include "Pad.h"
 #include "Hud.h"
@@ -122,6 +128,43 @@ CStreamingInfo::RemoveFromList(void)
 }
 
 void
+#ifdef GTA_PC
+static size_t
+GetUpstateStreamingMemoryLimit(void)
+{
+	const uint64 MB = 1024ULL * 1024ULL;
+	uint64 totalPhysicalMemory = 0;
+
+#ifdef _WIN32
+	MEMORYSTATUSEX memoryStatus = {};
+	memoryStatus.dwLength = sizeof(memoryStatus);
+	if(GlobalMemoryStatusEx(&memoryStatus))
+		totalPhysicalMemory = memoryStatus.ullTotalPhys;
+#else
+	long physicalPages = sysconf(_SC_PHYS_PAGES);
+	long pageSize = sysconf(_SC_PAGE_SIZE);
+	if(physicalPages > 0 && pageSize > 0)
+		totalPhysicalMemory = (uint64)physicalPages * (uint64)pageSize;
+#endif
+
+	if(totalPhysicalMemory == 0){
+		extern size_t _dwMemAvailPhys;
+		size_t available = _dwMemAvailPhys > 10 * MB ?
+			(_dwMemAvailPhys - 10 * MB) / 2 : 50 * MB;
+		return available < 50 * MB ? 50 * MB : available;
+	}
+
+	// Upstate Liberty's MemoryAvailable=30% setting, capped by the
+	// original limit adjuster's 2 GB safety ceiling.
+	uint64 limit = totalPhysicalMemory * 30 / 100;
+	if(limit > 2048 * MB)
+		limit = 2048 * MB;
+	if(limit < 50 * MB)
+		limit = 50 * MB;
+	return (size_t)limit;
+}
+#endif
+
 CStreaming::Init2(void)
 {
 	int i;
@@ -219,10 +262,7 @@ CStreaming::Init2(void)
 #ifdef GTA_PC
 #define MB (1024*1024)
 
-	extern size_t _dwMemAvailPhys;
-	ms_memoryAvailable = (_dwMemAvailPhys - 10*MB)/2;
-	if(ms_memoryAvailable < 50*MB)
-		ms_memoryAvailable = 50*MB;
+	ms_memoryAvailable = GetUpstateStreamingMemoryLimit();
 	desiredNumVehiclesLoaded = (int32)((ms_memoryAvailable / MB - 50) / 3 + 12);
 	if(desiredNumVehiclesLoaded > MAXVEHICLESLOADED)
 		desiredNumVehiclesLoaded = MAXVEHICLESLOADED;
@@ -2685,13 +2725,8 @@ void
 CStreaming::MakeSpaceFor(int32 size)
 {
 #ifdef FIX_BUGS
-#define MB (1024 * 1024)
-	if(ms_memoryAvailable == 0) {
-		extern size_t _dwMemAvailPhys;
-		ms_memoryAvailable = (_dwMemAvailPhys - 10 * MB) / 2;
-		if(ms_memoryAvailable < 50 * MB) ms_memoryAvailable = 50 * MB;
-	}
-#undef MB
+	if(ms_memoryAvailable == 0)
+		ms_memoryAvailable = GetUpstateStreamingMemoryLimit();
 #endif
 	while(ms_memoryUsed >= ms_memoryAvailable - size)
 		if(!RemoveLeastUsedModel()) {

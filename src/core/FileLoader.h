@@ -22,6 +22,7 @@ public:
 	static void AddTexDictionaries(RwTexDictionary *dst, RwTexDictionary *src);
 
 	static void LoadObjectTypes(const char *filename);
+	static void LoadModelTraits(const char *filename);
 	static void LoadObject(const char *line);
 	static int LoadMLO(const char *line);
 	static void LoadMLOInstance(int id, const char *line);

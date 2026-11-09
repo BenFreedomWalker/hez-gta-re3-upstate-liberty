@@ -370,18 +370,19 @@ void InitModelIndices(void);
 void MatchModelString(const char *name, int16 id);
 void TestModelIndices(void);
 
-inline bool
-IsGlass(int16 id)
+enum eModelTrait
 {
-	return id == MI_GLASS1 ||
-		id == MI_GLASS2 ||
-		id == MI_GLASS3 ||
-		id == MI_GLASS4 ||
-		id == MI_GLASS5 ||
-		id == MI_GLASS6 ||
-		id == MI_GLASS7 ||
-		id == MI_GLASS8;
-}
+	MODEL_TRAIT_DOOR,
+	MODEL_TRAIT_TREE,
+	MODEL_TRAIT_BANNER,
+	MODEL_TRAIT_GLASS,
+	MODEL_TRAIT_COUNT
+};
+
+void ClearModelTraits(void);
+void SetModelTrait(int16 id, eModelTrait trait);
+
+bool IsGlass(int16 id);
 
 inline bool
 IsStreetLight(int16 id)
@@ -415,43 +416,9 @@ IsPedModel(int16 id)
 	return id >= MI_PLAYER && id <= MI_LAST_PED;
 }
 
-inline bool
-IsTreeModel(int16 id)
-{
-	return id == MI_TREE1 ||
-		id == MI_TREE2 ||
-		id == MI_TREE3 ||
-		id == MI_TREE4 ||
-		id == MI_TREE5 ||
-		id == MI_TREE6 ||
-		id == MI_TREE7 ||
-		id == MI_TREE8 ||
-		id == MI_TREE9 ||
-		id == MI_TREE10 ||
-		id == MI_TREE11 ||
-		id == MI_TREE12 ||
-		id == MI_TREE13 ||
-		id == MI_TREE14;
-}
-
-inline bool
-IsBannerModel(int16 id)
-{
-	return id == MI_CHINABANNER1 ||
-		id == MI_CHINABANNER2 ||
-		id == MI_CHINABANNER3 ||
-		id == MI_CHINABANNER4 ||
-		id == MI_CHINABANNER5 ||
-		id == MI_CHINABANNER6 ||
-		id == MI_CHINABANNER7 ||
-		id == MI_CHINABANNER8 ||
-		id == MI_CHINABANNER9 ||
-		id == MI_CHINABANNER10 ||
-		id == MI_CHINABANNER11 ||
-		id == MI_CHINABANNER12 ||
-		id == MI_ITALYBANNER1 ||
-		id == MI_CHINALANTERN;
-}
+bool IsTreeModel(int16 id);
+bool IsBannerModel(int16 id);
+bool IsDoorModel(int16 id);
 inline bool
 IsPickupModel(int16 id)
 {

@@ -15,6 +15,8 @@
 #include "World.h"
 #include "SaveBuf.h"
 
+static const int32 MAX_PARKED_CARS = 35;
+
 uint8 CTheCarGenerators::ProcessCounter;
 uint32 CTheCarGenerators::NumOfCarGenerators;
 CCarGenerator CTheCarGenerators::CarGeneratorArray[NUM_CARGENS];
@@ -52,7 +54,7 @@ void CCarGenerator::DoInternalProcessing()
 			--CTheCarGenerators::CurrentActiveCount;
 		return;
 	}
-	if (CCarCtrl::NumParkedCars >= 10)
+	if (CCarCtrl::NumParkedCars >= MAX_PARKED_CARS)
 		return;
 	CStreaming::RequestModel(m_nModelIndex, STREAMFLAGS_DEPENDENCY);
 	if (!CStreaming::HasModelLoaded(m_nModelIndex))

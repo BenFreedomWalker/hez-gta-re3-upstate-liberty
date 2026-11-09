@@ -11,7 +11,7 @@
 
 #include "main.h"
 
-uint8 work_buff[55000];
+uint8 work_buff[GAME_STORAGE_BUFFER_SIZE];
 #include "CdStream.h"
 #include "General.h"
 #include "RwHelper.h"

@@ -243,6 +243,10 @@ CFileLoader::LoadCollisionModel(uint8 *buf, CColModel &model, char *modelname)
 {
 	int i;
 
+	// Upstate Liberty collision models prefix the standard COL payload with CED2.
+	if(memcmp(buf, "CED2", 4) == 0)
+		buf += 4;
+
 	model.boundingSphere.radius = *(float*)(buf);
 	model.boundingSphere.center.x = *(float*)(buf+4);
 	model.boundingSphere.center.y = *(float*)(buf+8);

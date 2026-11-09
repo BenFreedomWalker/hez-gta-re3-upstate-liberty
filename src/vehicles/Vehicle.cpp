@@ -269,7 +269,7 @@ CVehicle::FlyingControl(eFlightModel flightModel)
 		impulse = (upImpulse*3.5f + 0.5f)*0.05f *
 			magic*m_fMass*CTimer::GetTimeStep();
 		if(GRAVITY*m_fMass*CTimer::GetTimeStep() < impulse &&
-		   GetPosition().z > 100.0f)
+		   GetPosition().z > 300.0f)
 			impulse = 0.9f*GRAVITY*m_fMass*CTimer::GetTimeStep();
 		CVector com = Multiply3x3(GetMatrix(), m_vecCentreOfMass);
 		ApplyMoveForce(impulse*GetUp());

@@ -204,10 +204,6 @@ struct ColHeader
 static bool
 ValidateCollisionModelData(const uint8 *data, size_t size)
 {
-	if(size >= 4 && memcmp(data, "CED2", 4) == 0){
-		data += 4;
-		size -= 4;
-	}
 	if(size < 44)
 		return false;
 
@@ -264,7 +260,7 @@ CFileLoader::LoadCollisionFile(const char *filename)
 			break;
 		}
 		memcpy(modelname, colData, sizeof(modelname));
-		modelname[sizeof(modelname) - 1] = '\0';
+		modelname[20] = '\0';
 
 		if(!ValidateCollisionModelData(colData + sizeof(modelname),
 		                               header.size - sizeof(modelname))){
@@ -296,10 +292,6 @@ void
 CFileLoader::LoadCollisionModel(uint8 *buf, CColModel &model, char *modelname)
 {
 	int i;
-
-	// Upstate Liberty collision models prefix the standard COL payload with CED2.
-	if(memcmp(buf, "CED2", 4) == 0)
-		buf += 4;
 
 	model.boundingSphere.radius = *(float*)(buf);
 	model.boundingSphere.center.x = *(float*)(buf+4);

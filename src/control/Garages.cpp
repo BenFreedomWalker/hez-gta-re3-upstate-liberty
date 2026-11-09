@@ -2506,7 +2506,8 @@ CGarages::IsModelIndexADoor(uint32 id)
 		id == MI_GARAGEDOOR31 ||
 		id == MI_GARAGEDOOR32 ||
 		id == MI_CRUSHERBODY ||
-		id == MI_CRUSHERLID;
+		id == MI_CRUSHERLID ||
+		IsDoorModel(id);
 }
 
 void CGarages::StopCarFromBlowingUp(CAutomobile* pCar)

@@ -119,7 +119,7 @@ CCarCtrl::GenerateOneRandomCar()
 	pPlayer->m_nTrafficMultiplier = pPlayer->m_fRoadDensity * zone.carDensity;
 	if (NumRandomCars >= pPlayer->m_nTrafficMultiplier * CarDensityMultiplier * CIniFile::CarNumberMultiplier)
 		return;
-	if (NumFiretrucksOnDuty + NumAmbulancesOnDuty + NumParkedCars + NumMissionCars + NumLawEnforcerCars + NumRandomCars >= MaxNumberOfCarsInUse)
+	if (NumFiretrucksOnDuty + NumAmbulancesOnDuty + NumMissionCars + NumLawEnforcerCars + NumRandomCars >= MaxNumberOfCarsInUse)
 		return;
 	CWanted* pWanted = pPlayer->m_pPed->m_pWanted;
 	int carClass;
@@ -2661,7 +2661,7 @@ void CCarCtrl::GenerateEmergencyServicesCar(void)
 {
 	if (FindPlayerPed()->m_pWanted->GetWantedLevel() > 3)
 		return;
-	if (NumFiretrucksOnDuty + NumAmbulancesOnDuty + NumParkedCars + NumMissionCars +
+	if (NumFiretrucksOnDuty + NumAmbulancesOnDuty + NumMissionCars +
 		NumLawEnforcerCars + NumRandomCars > MaxNumberOfCarsInUse)
 		return;
 	if (NumAmbulancesOnDuty == 0){

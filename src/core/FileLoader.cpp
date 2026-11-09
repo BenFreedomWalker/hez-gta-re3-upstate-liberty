@@ -214,25 +214,39 @@ CFileLoader::LoadCollisionFile(const char *filename)
 	debug("Loading collision file %s\n", filename);
 	fd = CFileMgr::OpenFile(filename, "rb");
 
-	while(CFileMgr::Read(fd, (char*)&header, sizeof(header))){
-		assert(header.ident == 'LLOC');
-		CFileMgr::Read(fd, (char*)work_buff, header.size);
-		memcpy(modelname, work_buff, 24);
+	while(CFileMgr::Read(fd, (char*)&header, sizeof(header)) == sizeof(header)){
+		if(header.ident != 'LLOC' || header.size < sizeof(modelname) ||
+		   header.size > 16 * 1024 * 1024){
+			debug("Invalid collision record in %s\\n", filename);
+			break;
+		}
+
+		uint8 *colData = (uint8*)RwMalloc(header.size);
+		if(colData == nil){
+			debug("Could not allocate collision record from %s\\n", filename);
+			break;
+		}
+		if(CFileMgr::Read(fd, (char*)colData, header.size) != header.size){
+			debug("Incomplete collision record in %s\\n", filename);
+			RwFree(colData);
+			break;
+		}
+		memcpy(modelname, colData, sizeof(modelname));
 
 		mi = CModelInfo::GetModelInfo(modelname, nil);
 		if(mi){
 			if(mi->GetColModel()){
-				LoadCollisionModel(work_buff+24, *mi->GetColModel(), modelname);
+				LoadCollisionModel(colData+sizeof(modelname), *mi->GetColModel(), modelname);
 			}else{
 				CColModel *model = new CColModel;
-				LoadCollisionModel(work_buff+24, *model, modelname);
+				LoadCollisionModel(colData+sizeof(modelname), *model, modelname);
 				mi->SetColModel(model, true);
 			}
 		}else{
-			debug("colmodel %s can't find a modelinfo\n", modelname);
+			debug("colmodel %s can't find a modelinfo\\n", modelname);
 		}
+		RwFree(colData);
 	}
-
 	CFileMgr::CloseFile(fd);
 
 	POP_MEMID();

@@ -976,7 +976,7 @@ CFileLoader::LoadModelTraits(const char *filename)
 	};
 	int fd = CFileMgr::OpenFile(filename, "rb");
 	if(fd < 0){
-		debug("Model traits file %s not found; using built-in model traits.\\n", filename);
+		debug("Model traits file %s not found; using built-in model traits.\n", filename);
 		return;
 	}
 
@@ -985,7 +985,7 @@ CFileLoader::LoadModelTraits(const char *filename)
 	char *line;
 	int loaded = 0;
 	for(line = LoadLine(fd); line; line = LoadLine(fd)){
-		if(*line == '\\0' || *line == '#')
+		if(*line == '\0' || *line == '#')
 			continue;
 		if(strcmp(line, "end") == 0){
 			section = NONE;
@@ -1010,7 +1010,7 @@ CFileLoader::LoadModelTraits(const char *filename)
 		loaded++;
 	}
 	CFileMgr::CloseFile(fd);
-	debug("Loaded %d model traits from %s\\n", loaded, filename);
+	debug("Loaded %d model traits from %s\n", loaded, filename);
 }
 
 void

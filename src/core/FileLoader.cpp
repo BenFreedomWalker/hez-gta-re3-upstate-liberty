@@ -107,6 +107,8 @@ CFileLoader::LoadLevel(const char *filename)
 			LoadObjectTypes(line + 4);
 		}else if(strncmp(line, "IPL", 3) == 0){
 			if(!objectsLoaded){
+				// All IDEs have been read by this point, so model names can be resolved.
+				LoadModelTraits("data/modelTraits.dat");
 				PUSH_MEMID(MEMID_DEF_MODELS);
 				CModelInfo::ConstructMloClumps();
 				POP_MEMID();
@@ -960,6 +962,56 @@ CFileLoader::AddTexDictionaries(RwTexDictionary *dst, RwTexDictionary *src)
 
 #define isLine3(l, a, b, c) ((l[0] == a) && (l[1] == b) && (l[2] == c))
 #define isLine4(l, a, b, c, d) ((l[0] == a) && (l[1] == b) && (l[2] == c) && (l[3] == d))
+
+
+void
+CFileLoader::LoadModelTraits(const char *filename)
+{
+	enum {
+		NONE,
+		DOORS,
+		TREES,
+		BANNERS,
+		GLASS
+	};
+	int fd = CFileMgr::OpenFile(filename, "rb");
+	if(fd < 0){
+		debug("Model traits file %s not found; using built-in model traits.\\n", filename);
+		return;
+	}
+
+	int section = NONE;
+	int modelId;
+	char *line;
+	int loaded = 0;
+	for(line = LoadLine(fd); line; line = LoadLine(fd)){
+		if(*line == '\\0' || *line == '#')
+			continue;
+		if(strcmp(line, "end") == 0){
+			section = NONE;
+			continue;
+		}
+		if(section == NONE){
+			if(strcmp(line, "door") == 0) section = DOORS;
+			else if(strcmp(line, "tree") == 0) section = TREES;
+			else if(strcmp(line, "banner") == 0) section = BANNERS;
+			else if(strcmp(line, "glass") == 0) section = GLASS;
+			continue;
+		}
+
+		if(!CModelInfo::GetModelInfo(line, &modelId))
+			continue;
+		switch(section){
+		case DOORS: SetModelTrait(modelId, MODEL_TRAIT_DOOR); break;
+		case TREES: SetModelTrait(modelId, MODEL_TRAIT_TREE); break;
+		case BANNERS: SetModelTrait(modelId, MODEL_TRAIT_BANNER); break;
+		case GLASS: SetModelTrait(modelId, MODEL_TRAIT_GLASS); break;
+		}
+		loaded++;
+	}
+	CFileMgr::CloseFile(fd);
+	debug("Loaded %d model traits from %s\\n", loaded, filename);
+}
 
 void
 CFileLoader::LoadObjectTypes(const char *filename)

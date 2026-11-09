@@ -1,6 +1,8 @@
 #include "common.h"
 
 #include "DMAudio.h"
+#include "FileMgr.h"
+#include "FileLoader.h"
 
 #include "AudioManager.h"
 
@@ -80,6 +82,30 @@ cAudioManager::InitialisePoliceRadioZones()
 
 	strcpy(SubZo2Label, "SUB_ZO2");
 	strcpy(SubZo3Label, "SUB_ZO3");
+
+	// Allow Upstate Liberty to override the police-radio sample for each audio zone.
+	int32 fd = CFileMgr::OpenFile("data\\policeZoneSfx.dat", "r");
+	if(fd > 0){
+		int32 index = 0;
+		char *line;
+		while((line = CFileLoader::LoadLine(fd)) != nil){
+			if(*line == '\\0' || *line == '#')
+				continue;
+
+			char zoneName[24];
+			uint32 sampleIndex;
+			if(sscanf(line, "%23s %u", zoneName, &sampleIndex) == 2){
+				if(index >= NUMAUDIOZONES)
+					break;
+				strncpy(ZoneSfx[index].m_aName, zoneName, 7);
+				ZoneSfx[index].m_aName[7] = '\\0';
+				ZoneSfx[index].m_nSampleIndex = sampleIndex;
+				ZoneSfx[index].field_12 = 0;
+				index++;
+			}
+		}
+		CFileMgr::CloseFile(fd);
+	}
 }
 
 void

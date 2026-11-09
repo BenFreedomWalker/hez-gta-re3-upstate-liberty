@@ -10,6 +10,8 @@
 #endif
 
 #include "main.h"
+
+uint8 work_buff[55000];
 #include "CdStream.h"
 #include "General.h"
 #include "RwHelper.h"

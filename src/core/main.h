@@ -1,5 +1,7 @@
 #pragma once
 
+extern uint8 work_buff[55000];
+
 #ifndef FINAL
 // defined in RwHelpder.cpp
 void PushRendergroup(const char *name);

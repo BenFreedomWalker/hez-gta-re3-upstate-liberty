@@ -447,7 +447,7 @@ bool CGame::Initialise(const char* datFile)
 	TheCamera.SetRwCamera(Scene.camera);
 	CDebug::DebugInitTextBuffer();
 	ThePaths.Init();
-	ThePaths.AllocatePathFindInfoMem(4500);
+	ThePaths.AllocatePathFindInfoMem(PATHNODESIZE);
 	CWeather::Init();
 	CCullZones::Init();
 	CCollision::Init();

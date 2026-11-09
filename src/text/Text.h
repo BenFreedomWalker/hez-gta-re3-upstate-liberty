@@ -49,9 +49,19 @@ public:
 	void Unload(void);
 };
 
+struct CFxtEntry
+{
+	char key[24];
+	wchar *value;
+};
+
 class CText
 {
 	CKeyArray keyArray;
+	CFxtEntry *fxtEntries;
+	int32 numFxtEntries;
+	void LoadFxt(const char *filename);
+	void UnloadFxt(void);
 	CData data;
 	char encoding;
 public:

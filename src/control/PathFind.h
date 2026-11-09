@@ -223,7 +223,8 @@ public:
 	void DisplayPathData(void);
 };
 
-VALIDATE_SIZE(CPathFind, 0x49bf4);
+// The path arrays are deliberately enlarged for Upstate Liberty; the original
+// executable-layout size no longer applies to this dynamically sized engine build.
 
 extern CPathFind ThePaths;
 

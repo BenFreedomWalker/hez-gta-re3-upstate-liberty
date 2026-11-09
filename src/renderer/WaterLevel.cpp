@@ -638,7 +638,7 @@ SectorRadius(float fSize)
 void
 CWaterLevel::RenderWater()
 {
-	const int32 outsideWaterBlocks = 40;
+	const int32 outsideWaterBlocks = 40; // Upstate's OutsideWorldWaterBlocks setting.
 	const float outsideWaterOffset = outsideWaterBlocks * EXTRAHUGE_SECTOR_SIZE;
 //"Custom" Don't Render Water Toggle
 #ifndef MASTER

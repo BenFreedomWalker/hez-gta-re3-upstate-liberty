@@ -445,6 +445,7 @@ CRubbish::Init(void)
 void
 CRubbish::Shutdown(void)
 {
+	int i;
 	RwTextureDestroy(gpRubbishTexture[0]);
 #if GTA_VERSION >= GTA3_PC_11
 	gpRubbishTexture[0] = nil;

@@ -15,6 +15,8 @@ CText TheText;
 CText::CText(void)
 {
 	encoding = 'e';
+	fxtEntries = nil;
+	numFxtEntries = 0;
 	memset(WideErrorString, 0, sizeof(WideErrorString));
 }
 
@@ -82,6 +84,7 @@ CText::Load(void)
 	}
 
 	keyArray.Update(data.chars);
+	LoadFxt("CLEO/CLEO_TEXT/ul_text.fxt");
 
 	delete[] filedata;
 }
@@ -92,16 +95,88 @@ CText::Unload(void)
 	CMessages::ClearAllMessagesDisplayedByGame();
 	data.Unload();
 	keyArray.Unload();
+	UnloadFxt();
 }
 
 wchar*
 CText::Get(const char *key)
 {
+	for(int32 i = numFxtEntries - 1; i >= 0; i--)
+		if(strcmp(key, fxtEntries[i].key) == 0)
+			return fxtEntries[i].value;
 #if defined (FIX_BUGS) || defined(FIX_BUGS_64)
 	return keyArray.Search(key, data.chars);
 #else
 	return keyArray.Search(key);
 #endif
+}
+
+
+void
+CText::UnloadFxt(void)
+{
+	for(int32 i = 0; i < numFxtEntries; i++)
+		delete[] fxtEntries[i].value;
+	delete[] fxtEntries;
+	fxtEntries = nil;
+	numFxtEntries = 0;
+}
+
+void
+CText::LoadFxt(const char *filename)
+{
+	const int32 maxLength = 64 * 1024;
+	uint8 *buffer = new uint8[maxLength + 1];
+	ssize_t length = CFileMgr::LoadFile(filename, buffer, maxLength, "rb");
+	if(length <= 0 || length > maxLength){
+		delete[] buffer;
+		return;
+	}
+
+	UnloadFxt();
+	buffer[length] = '\0';
+	fxtEntries = new CFxtEntry[length / 2 + 1];
+
+	char *cursor = (char*)buffer;
+	char *limit = cursor + length;
+	while(cursor < limit){
+		char *line = cursor;
+		while(cursor < limit && *cursor != '\r' && *cursor != '\n')
+			cursor++;
+		if(cursor < limit)
+			*cursor++ = '\0';
+		while(cursor < limit && (*cursor == '\r' || *cursor == '\n'))
+			cursor++;
+
+		while(*line == ' ' || *line == '\t')
+			line++;
+		if(*line == '\0' || *line == '#' || *line == ';')
+			continue;
+
+		char *separator = line;
+		while(*separator != '\0' && *separator != ' ' && *separator != '\t')
+			separator++;
+		if(*separator == '\0')
+			continue;
+		*separator++ = '\0';
+		while(*separator == ' ' || *separator == '\t')
+			separator++;
+
+		char *valueEnd = separator + strlen(separator);
+		while(valueEnd > separator && (valueEnd[-1] == ' ' || valueEnd[-1] == '\t'))
+			*--valueEnd = '\0';
+		if(*separator == '\0' || strlen(line) >= sizeof(fxtEntries[0].key))
+			continue;
+
+		CFxtEntry *entry = &fxtEntries[numFxtEntries++];
+		strcpy(entry->key, line);
+		size_t valueLength = strlen(separator);
+		entry->value = new wchar[valueLength + 1];
+		for(size_t i = 0; i < valueLength; i++)
+			entry->value[i] = (uint8)separator[i];
+		entry->value[valueLength] = 0;
+	}
+	delete[] buffer;
 }
 
 wchar UpperCaseTable[128] = {

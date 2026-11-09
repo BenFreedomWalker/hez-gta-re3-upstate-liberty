@@ -712,7 +712,6 @@ void CTheScripts::Process()
 		script->Process();
 		script = next;
 	}
-	DbgFlag = false;
 
 #ifdef USE_ADVANCED_SCRIPT_DEBUG_OUTPUT
 	LogAfterScriptProcessing();

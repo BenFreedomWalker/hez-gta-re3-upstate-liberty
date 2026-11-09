@@ -1,9 +1,11 @@
 #include "common.h"
 
+#ifdef GTA_PC
 #ifdef _WIN32
 #include <windows.h>
 #else
 #include <unistd.h>
+#endif
 #endif
 
 #include "General.h"
@@ -2724,7 +2726,7 @@ CStreaming::DeleteRwObjectsNotInFrustumInSectorList(CPtrList &list, size_t mem)
 void
 CStreaming::MakeSpaceFor(int32 size)
 {
-#ifdef FIX_BUGS
+#if defined(FIX_BUGS) && defined(GTA_PC)
 	if(ms_memoryAvailable == 0)
 		ms_memoryAvailable = GetUpstateStreamingMemoryLimit();
 #endif

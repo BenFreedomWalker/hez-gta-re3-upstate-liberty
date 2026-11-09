@@ -260,7 +260,10 @@ CFileLoader::LoadCollisionFile(const char *filename)
 			break;
 		}
 		memcpy(modelname, colData, sizeof(modelname));
-		modelname[20] = '\0'; // COL2 stores a 20-byte name followed by the CED2 tag.
+		if(memcmp(modelname + 20, "CED2", 4) == 0)
+			modelname[20] = '\0'; // COL2 stores a 20-byte name followed by the CED2 tag.
+		else
+			modelname[sizeof(modelname) - 1] = '\0';
 
 		if(!ValidateCollisionModelData(colData + sizeof(modelname),
 		                               header.size - sizeof(modelname))){

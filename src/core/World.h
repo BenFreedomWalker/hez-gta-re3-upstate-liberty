@@ -5,13 +5,13 @@
 #include "PlayerInfo.h"
 #include "Collision.h"
 
-/* X sectors span -2000 to 2600; Y sectors span -2000 to 2000.
- * Each sector covers 40x40 world units. */
+/* Sectors span from -2000 to 2000 in x and y.
+ * With 100x100 sectors, each is 40x40 units. */
 
 #define SECTOR_SIZE_X (40.0f)
 #define SECTOR_SIZE_Y (40.0f)
 
-#define NUMSECTORS_X (115)
+#define NUMSECTORS_X (100)
 #define NUMSECTORS_Y (100)
 
 #define WORLD_SIZE_X (NUMSECTORS_X * SECTOR_SIZE_X)

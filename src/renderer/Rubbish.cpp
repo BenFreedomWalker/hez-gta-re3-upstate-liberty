@@ -8,6 +8,7 @@
 #include "World.h"
 #include "Vehicle.h"
 #include "ZoneCull.h"
+#include "Zones.h"
 #include "TxdStore.h"
 #include "RenderBuffer.h"
 #include "Rubbish.h"
@@ -16,6 +17,7 @@
 #define RUBBISH_FADE_DIST (16.5f)
 
 RwTexture *gpRubbishTexture[4];
+static RwTexture *gpRuralRubbishTexture[4];
 RwImVertexIndex RubbishIndexList[6];
 RwImVertexIndex RubbishIndexList2[6];	// unused
 RwIm3DVertex RubbishVertices[4];
@@ -51,6 +53,28 @@ COneSheet::RemoveFromList(void)
 // time of the rendered frame, so the sheet flies as smoothly as the frame rate allows
 static CVector AnimatedPos(COneSheet *sheet, uint32 currentTime);
 
+static bool
+UseRuralRubbishTextures(void)
+{
+	if(!FindPlayerPed())
+		return false;
+
+	CVector playerPos = FindPlayerCoors();
+	int16 zoneIndex = CTheZones::FindZoneByLabelAndReturnIndex("UL_ZON0");
+	CZone *zone = CTheZones::GetPointerForZoneIndex(zoneIndex);
+	if(!zone || !CTheZones::PointLiesWithinZone(&playerPos, zone))
+		return false;
+
+	static const char *urbanZones[] = { "GT_ZON0", "BAXTER", "WARSAW", "CARRIN" };
+	for(uint32 i = 0; i < ARRAY_SIZE(urbanZones); i++){
+		zoneIndex = CTheZones::FindZoneByLabelAndReturnIndex(urbanZones[i]);
+		zone = CTheZones::GetPointerForZoneIndex(zoneIndex);
+		if(zone && CTheZones::PointLiesWithinZone(&playerPos, zone))
+			return false;
+	}
+	return true;
+}
+
 void
 CRubbish::Render(void)
 {
@@ -62,8 +86,11 @@ CRubbish::Render(void)
 	RwRenderStateSet(rwRENDERSTATEVERTEXALPHAENABLE, (void*)TRUE);
 	RwRenderStateSet(rwRENDERSTATEFOGENABLE, (void*)TRUE);
 
+	bool useRuralTextures = UseRuralRubbishTextures();
 	for(type = 0; type < 4; type++){
-		RwRenderStateSet(rwRENDERSTATETEXTURERASTER, RwTextureGetRaster(gpRubbishTexture[type]));
+		RwTexture *texture = useRuralTextures && gpRuralRubbishTexture[type] ?
+			gpRuralRubbishTexture[type] : gpRubbishTexture[type];
+		RwRenderStateSet(rwRENDERSTATETEXTURERASTER, RwTextureGetRaster(texture));
 
 		TempBufferIndicesStored = 0;
 		TempBufferVerticesStored = 0;
@@ -406,6 +433,10 @@ CRubbish::Init(void)
 	gpRubbishTexture[1] = RwTextureRead("gameleaf02_64", nil);
 	gpRubbishTexture[2] = RwTextureRead("newspaper01_64", nil);
 	gpRubbishTexture[3] = RwTextureRead("newspaper02_64", nil);
+	gpRuralRubbishTexture[0] = RwTextureRead("gameleaf01_64", nil);
+	gpRuralRubbishTexture[1] = RwTextureRead("gameleaf02_64", nil);
+	gpRuralRubbishTexture[2] = RwTextureRead("gameleaf01_64", nil);
+	gpRuralRubbishTexture[3] = RwTextureRead("gameleaf02_64", nil);
 	CTxdStore::PopCurrentTxd();
 	RubbishVisibility = 255;
 	bRubbishInvisible = false;
@@ -430,6 +461,12 @@ CRubbish::Shutdown(void)
 #if GTA_VERSION >= GTA3_PC_11
 	gpRubbishTexture[3] = nil;
 #endif
+	for(i = 0; i < 4; i++){
+		if(gpRuralRubbishTexture[i]){
+			RwTextureDestroy(gpRuralRubbishTexture[i]);
+			gpRuralRubbishTexture[i] = nil;
+		}
+	}
 }
 
 static CVector

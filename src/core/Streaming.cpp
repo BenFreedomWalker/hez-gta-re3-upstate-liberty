@@ -127,7 +127,6 @@ CStreamingInfo::RemoveFromList(void)
 	m_prev = nil;
 }
 
-void
 #ifdef GTA_PC
 static size_t
 GetUpstateStreamingMemoryLimit(void)
@@ -165,6 +164,7 @@ GetUpstateStreamingMemoryLimit(void)
 }
 #endif
 
+void
 CStreaming::Init2(void)
 {
 	int i;

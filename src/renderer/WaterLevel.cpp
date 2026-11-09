@@ -638,6 +638,8 @@ SectorRadius(float fSize)
 void
 CWaterLevel::RenderWater()
 {
+	const int32 outsideWaterBlocks = 40;
+	const float outsideWaterOffset = outsideWaterBlocks * EXTRAHUGE_SECTOR_SIZE;
 //"Custom" Don't Render Water Toggle
 #ifndef MASTER
 	if (gbDontRenderWater)
@@ -926,12 +928,12 @@ CWaterLevel::RenderWater()
 
 	if ( !bUseCamStartY )
 	{
-		for ( int32 x = 0; x < 26; x++ )
+		for ( int32 x = 0; x < 26 + (outsideWaterBlocks - 5) * 2; x++ )
 		{
-			for ( int32 y = 0; y < 5; y++ )
+			for ( int32 y = 0; y < outsideWaterBlocks; y++ )
 			{
-				float fX = WATER_SIGN_X(float(x) * EXTRAHUGE_SECTOR_SIZE) - 1280.0f;
-				float fY = WATER_SIGN_Y(float(y) * EXTRAHUGE_SECTOR_SIZE) - 1280.0f;
+				float fX = WATER_SIGN_X(float(x) * EXTRAHUGE_SECTOR_SIZE) - outsideWaterOffset;
+				float fY = WATER_SIGN_Y(float(y) * EXTRAHUGE_SECTOR_SIZE) - outsideWaterOffset;
 				
 				CVector2D vecExtraHugeSectorCentre
 				(
@@ -956,13 +958,13 @@ CWaterLevel::RenderWater()
 		}
 	}
 	
-	for ( int32 y = 5; y < 21; y++ )
+	for ( int32 y = outsideWaterBlocks; y < outsideWaterBlocks + 16; y++ )
 	{
-		for ( int32 x = 0; x < 5; x++ )
+		for ( int32 x = 0; x < outsideWaterBlocks; x++ )
 		{
-			float fX = WATER_SIGN_X(float(x) * EXTRAHUGE_SECTOR_SIZE) - 1280.0f;
-			float fX2 = WATER_SIGN_X(float(x) * EXTRAHUGE_SECTOR_SIZE) - 1280.0f;
-			float fY = WATER_SIGN_Y(float(y) * EXTRAHUGE_SECTOR_SIZE) - 1280.0f;
+			float fX = WATER_SIGN_X(float(x) * EXTRAHUGE_SECTOR_SIZE) - outsideWaterOffset;
+			float fX2 = WATER_SIGN_X(float(x) * EXTRAHUGE_SECTOR_SIZE) - outsideWaterOffset;
+			float fY = WATER_SIGN_Y(float(y) * EXTRAHUGE_SECTOR_SIZE) - outsideWaterOffset;
 			
 			if ( !bUseCamStartX )
 			{

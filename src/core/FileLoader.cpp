@@ -201,6 +201,33 @@ struct ColHeader
 	uint32 size;
 };
 
+static bool
+ValidateCollisionModelData(const uint8 *data, size_t size)
+{
+	if(size >= 4 && memcmp(data, "CED2", 4) == 0){
+		data += 4;
+		size -= 4;
+	}
+	if(size < 44)
+		return false;
+
+	size_t offset = 40;
+	const size_t recordSizes[] = { 20, 24, 28, 12, 16 };
+	for(size_t recordSize : recordSizes){
+		int16 count;
+		if(size - offset < 4)
+			return false;
+		memcpy(&count, data + offset, sizeof(count));
+		if(count < 0)
+			return false;
+		offset += 4;
+		if((size_t)count > (size - offset) / recordSize)
+			return false;
+		offset += (size_t)count * recordSize;
+	}
+	return true;
+}
+
 void
 CFileLoader::LoadCollisionFile(const char *filename)
 {
@@ -238,6 +265,13 @@ CFileLoader::LoadCollisionFile(const char *filename)
 		}
 		memcpy(modelname, colData, sizeof(modelname));
 
+		if(!ValidateCollisionModelData(colData + sizeof(modelname),
+		                               header.size - sizeof(modelname))){
+			debug("Invalid collision model %s in %s\\n", modelname, filename);
+			RwFree(colData);
+			continue;
+		}
+
 		mi = CModelInfo::GetModelInfo(modelname, nil);
 		if(mi){
 			if(mi->GetColModel()){
@@ -248,7 +282,7 @@ CFileLoader::LoadCollisionFile(const char *filename)
 				mi->SetColModel(model, true);
 			}
 		}else{
-			debug("colmodel %s can't find a modelinfo\n", modelname);
+			debug("colmodel %s can't find a modelinfo\\n", modelname);
 		}
 		RwFree(colData);
 	}

@@ -111,7 +111,7 @@ float NumberOfChunksLoaded;
 #ifdef GTA_PS2
 #define TOTALNUMCHUNKS 48.0f
 #else
-#define TOTALNUMCHUNKS 102.0f
+#define TOTALNUMCHUNKS 102.0f // Upstate adds 29 loading chunks to the PC total.
 #endif
 
 bool g_SlowMode = false;

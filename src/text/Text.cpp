@@ -122,6 +122,7 @@ CText::UnloadFxt(void)
 	numFxtEntries = 0;
 }
 
+// CLEO FXT files use KEY text lines; this loads Upstate's optional zone and mission labels.
 void
 CText::LoadFxt(const char *filename)
 {
